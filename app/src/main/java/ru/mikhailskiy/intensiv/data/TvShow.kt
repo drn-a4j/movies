@@ -1,6 +1,6 @@
 package ru.mikhailskiy.intensiv.data
 
-class TvShow(
+data class TvShow(
     var title: String? = "",
     var voteAverage: Double = 0.0
 ) {
