@@ -21,5 +21,20 @@
         <item name="cornerSize">10%</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.CornerSize5Percent" parent="">
+        <item name="cornerSize">5%</item>
+    </style>
 
+    <style name="TvShowsTextView" parent="">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/tv_shows_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginTop">@dimen/material_margin_super_small</item>
+        <item name="android:layout_marginBottom">@dimen/material_margin_super_small</item>
+    </style>
+
+    <style name="TvShowsContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
 </resources>
