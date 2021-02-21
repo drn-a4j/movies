@@ -5,9 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.tv_shows_fragment.*
@@ -50,9 +47,9 @@ class TvShowsFragment : Fragment() {
         tv_shows_recycler_view.adapter = adapter.apply { addAll(listOf()) }
 
         val tvShowsList = MockRepository.getTvShows().map {
-            TvShowsItem(it) { movie ->
-                openMovieDetails(
-                    movie
+            TvShowsItem(it) { tvShow ->
+                openTvShowDetails(
+                    tvShow
                 )
             }
         }.toList()
@@ -64,19 +61,8 @@ class TvShowsFragment : Fragment() {
         tv_shows_recycler_view.adapter = adapter
     }
 
-    private fun openMovieDetails(tvShow: TvShow) {
-        val options = navOptions {
-            anim {
-                enter = R.anim.slide_in_right
-                exit = R.anim.slide_out_left
-                popEnter = R.anim.slide_in_left
-                popExit = R.anim.slide_out_right
-            }
-        }
+    private fun openTvShowDetails(tvShow: TvShow) {
 
-        val bundle = Bundle()
-        bundle.putString("title", tvShow.title)
-        findNavController().navigate(R.id.movie_details_fragment, bundle, options)
     }
 
     companion object {

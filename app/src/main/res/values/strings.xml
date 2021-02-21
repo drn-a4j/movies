@@ -26,4 +26,15 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="placeholder">Пёс Киноман</string>
+
+    <string name="movie_details_watch_button">Смотреть</string>
+
+    <string name="movie_details_default_text">In 1985 Maine, lighthouse keeper Thomas Curry rescues Atlanna, the queen of the underwater nation of Atlantis, during a storm. They eventually fall in love and have a son named Arthur, who is born with the power to communicate with marine lifeforms.</string>
+    <string name="movie_details_studio_label">Студия</string>
+    <string name="movie_details_genre_label">Жанр</string>
+    <string name="movie_details_year_label">Год</string>
+
+    <string name="movie_details_studio_value">Warner Bros</string>
+    <string name="movie_details_genre_value">Action, Adventure, Fantasy</string>
+    <string name="movie_details_year_value">2018</string>
 </resources>

@@ -21,6 +21,10 @@
         <item name="cornerSize">10%</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.CornerSizeXPercent" parent="">
+        <item name="cornerSize">49%</item>
+    </style>
+
     <style name="ShapeAppearanceOverlay.App.CornerSize5Percent" parent="">
         <item name="cornerSize">5%</item>
     </style>
@@ -36,5 +40,77 @@
     <style name="TvShowsContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- Movie Details-->
+    <style name="MovieDetailsCastItem" parent="">
+        <item name="android:layout_width">75dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="fontFamily">@font/open_sans</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="MovieDetailsDescription" parent="MovieDetailsTextViewBase">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/material_margin_normal</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+        <item name="fontFamily">@font/open_sans</item>
+    </style>
+
+    <style name="MovieDetailsRecyclerView" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/material_margin_normal</item>
+    </style>
+
+    <style name="MovieDetailsTextViewBase" parent="">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="MovieDetailsTextView" parent="">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/tv_shows_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginTop">@dimen/material_margin_super_small</item>
+        <item name="android:layout_marginBottom">@dimen/material_margin_super_small</item>
+    </style>
+
+    <style name="MovieDetailsSecondDescriptionTextViewBase" parent="MovieDetailsTextViewBase">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="MovieDetailsSecondDescriptionTextViewLabel" parent="MovieDetailsSecondDescriptionTextViewBase">
+        <item name="fontFamily">@font/open_sans_semibold</item>
+        <item name="android:layout_marginTop">@dimen/material_margin_super_small</item>
+    </style>
+
+    <style name="MovieDetailsImageView" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/material_margin_normal</item>
+    </style>
+
+    <style name="MovieDetailsButton" parent="MovieDetailsTextViewBase">
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/open_sans_bold</item>
+        <item name="background">@drawable/rounded_corner</item>
+        <item name="android:layout_margin">@dimen/material_margin_normal</item>
+        <item name="android:width">110dp</item>
+        <item name="android:height">30dp</item>
+    </style>
+
+    <style name="MovieDetailsTitle" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/open_sans_bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_margin">@dimen/material_margin_normal</item>
+        <item name="android:textSize">28sp</item>
     </style>
 </resources>

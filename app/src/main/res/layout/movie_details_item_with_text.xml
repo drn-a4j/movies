@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/movie_details_cast_item_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/material_margin_small"
+    android:layout_marginTop="@dimen/material_margin_middle"
+    android:layout_marginEnd="@dimen/material_margin_normal"
+    android:layout_marginBottom="@dimen/material_margin_small"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/movie_details_item_image"
+        android:layout_width="@dimen/movie_details_cast_item_image_view_width"
+        android:layout_height="@dimen/movie_details_cast_item_image_view_height"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_avatar"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSizeXPercent" />
+
+    <TextView
+        android:id="@+id/movie_details_item_first_name"
+        style="@style/MovieDetailsCastItem"
+        android:layout_marginTop="@dimen/material_margin_super_small"
+        tools:text="Jason"
+        tools:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/movie_details_item_last_name"
+        style="@style/MovieDetailsCastItem"
+        tools:text="Momoa"
+        tools:textColor="@color/black" />
+
+</LinearLayout>
