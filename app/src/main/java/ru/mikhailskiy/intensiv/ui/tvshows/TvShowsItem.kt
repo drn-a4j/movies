@@ -1,6 +1,5 @@
 package ru.mikhailskiy.intensiv.ui.tvshows
 
-import android.text.InputFilter
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item

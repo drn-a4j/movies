@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tv_shows_item_container"
-    style="@style/TvShowsContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="@dimen/material_margin_small"
     android:background="@color/mainFeedBackground"
     android:orientation="vertical">
@@ -18,12 +19,15 @@
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize5Percent" />
 
     <LinearLayout
-        style="@style/TvShowsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tv_shows_description"
             style="@style/TvShowsTextView"
+            android:layout_marginTop="@dimen/material_margin_super_small"
+            android:layout_marginBottom="@dimen/material_margin_super_small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

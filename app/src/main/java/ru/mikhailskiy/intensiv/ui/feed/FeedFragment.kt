@@ -18,6 +18,13 @@ import ru.mikhailskiy.intensiv.data.Movie
 import ru.mikhailskiy.intensiv.ui.afterTextChanged
 import timber.log.Timber
 
+const val ARG_TITLE = "title"
+const val ARG_RATING = "rating"
+const val ARG_DESCRIPTION = "description"
+const val ARG_STUDIO = "studio"
+const val ARG_GENRE = "genre"
+const val ARG_YEAR = "year"
+
 class FeedFragment : Fragment() {
 
     private val adapter by lazy {
@@ -91,7 +98,13 @@ class FeedFragment : Fragment() {
         }
 
         val bundle = Bundle()
-        bundle.putString("title", movie.title)
+        bundle.putString(ARG_TITLE, movie.title)
+        bundle.putFloat(ARG_RATING, movie.rating)
+        bundle.putString(ARG_DESCRIPTION, movie.description)
+        bundle.putString(ARG_STUDIO, movie.studio)
+        bundle.putString(ARG_GENRE, movie.genre)
+        bundle.putInt(ARG_YEAR, movie.year)
+
         findNavController().navigate(R.id.movie_details_fragment, bundle, options)
     }
 
