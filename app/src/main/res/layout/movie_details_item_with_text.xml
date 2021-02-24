@@ -23,6 +23,8 @@
     <TextView
         android:id="@+id/movie_details_item_first_name"
         style="@style/MovieDetailsCastItem"
+        android:layout_width="75dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="@dimen/material_margin_super_small"
         tools:text="Jason"
         tools:textColor="@color/black" />
@@ -30,6 +32,8 @@
     <TextView
         android:id="@+id/movie_details_item_last_name"
         style="@style/MovieDetailsCastItem"
+        android:layout_width="75dp"
+        android:layout_height="match_parent"
         tools:text="Momoa"
         tools:textColor="@color/black" />
 

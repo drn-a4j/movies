@@ -28,4 +28,8 @@
     <dimen name="movie_details_cast_item_image_view_width">60dp</dimen>
     <dimen name="movie_details_cast_item_image_view_height">60dp</dimen>
 
+    <!-- Movie Details Watch Button-->
+    <dimen name="movie_details_watch_button_width">110dp</dimen>
+    <dimen name="movie_details_watch_button_height">30dp</dimen>
+
 </resources>
