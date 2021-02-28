@@ -1,33 +1,30 @@
 package ru.mikhailskiy.intensiv.ui.movie_details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.movie_details_fragment.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import ru.mikhailskiy.intensiv.BuildConfig
 import ru.mikhailskiy.intensiv.R
-import ru.mikhailskiy.intensiv.data.MockRepository
+import ru.mikhailskiy.intensiv.data.MovieCredit
+import ru.mikhailskiy.intensiv.data.MovieDetails
+import ru.mikhailskiy.intensiv.network.MovieApiClient
 
-private const val ARG_TITLE = "title"
-private const val ARG_RATING = "rating"
-private const val ARG_DESCRIPTION = "description"
-private const val ARG_STUDIO = "studio"
-private const val ARG_GENRE = "genre"
-private const val ARG_YEAR = "year"
+
 
 class MovieDetailsFragment : Fragment() {
 
-    private var title: String? = null
-    private var rating: Float? = null
-    private var description: String? = null
-    private var studio: String? = null
-    private var genre: String? = null
-    private var year: Int? = null
-
+    private var id: Int? = null
 
     private val adapter by lazy {
         GroupAdapter<GroupieViewHolder>()
@@ -36,12 +33,7 @@ class MovieDetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            title = it.getString(ARG_TITLE)
-            rating = it.getFloat(ARG_RATING)
-            description = it.getString(ARG_DESCRIPTION)
-            studio = it.getString(ARG_STUDIO)
-            genre = it.getString(ARG_GENRE)
-            year = it.getInt(ARG_YEAR)
+            id = it.getInt(ARG_ID)
         }
     }
 
@@ -56,24 +48,70 @@ class MovieDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        movie_details_title.text = title
-        movie_details_rating.rating = rating ?: 0.0f
-        movie_details_description.text = description
-        movie_details_studio_value.text = studio
-        movie_details_genre_value.text = genre
-        movie_details_year_value.text = year.toString()
+        val getMovieDetails = MovieApiClient.apiClient.getMovieDetails(id!!, API_KEY, "ru")
+        getMovieDetails.enqueue(object : Callback<MovieDetails> {
+            override fun onFailure(call: Call<MovieDetails>, t: Throwable) {
+                Log.d(TAG, t.toString())
+            }
+
+            override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
+                Picasso.get()
+                    .load(response.body()!!.posterPath)
+                    .into(movie_details_image)
+
+                movie_details_title.text = response.body()!!.title
+                movie_details_rating.rating = response.body()!!.rating
+                movie_details_description.text = response.body()!!.overview
+                movie_details_year_value.text = response.body()!!.releaseDate.substring(0,4)
+
+                val genreString = StringBuilder()
+                val genreIterator = response.body()!!.genres.iterator()
+
+                while (genreIterator.hasNext()){
+                    genreString.append(genreIterator.next().name.capitalize())
+
+                    if (genreIterator.hasNext()){
+                        genreString.append(", ")
+                    }
+                }
+
+                movie_details_genre_value.text = genreString
+
+                val productionString = StringBuilder()
+                val productionIterator = response.body()!!.productionCompany.iterator()
+
+                while (productionIterator.hasNext()){
+                    productionString.append(productionIterator.next().name)
+
+                    if (productionIterator.hasNext()){
+                        productionString.append(", ")
+                    }
+                }
+
+                movie_details_studio_value.text = productionString
+            }
+        })
 
         movie_details_cast_recycler_view.adapter = adapter.apply { addAll(listOf()) }
 
-        val castList = MockRepository.getMovieCast(1).map {
-            MovieDetailsCastItem(it)
-        }.toList()
+        val getMovieCredits = MovieApiClient.apiClient.getMovieCredits(id!!, API_KEY, "ru")
+        getMovieCredits.enqueue(object : Callback<MovieCredit> {
+            override fun onFailure(call: Call<MovieCredit>, t: Throwable) {
+                Log.d(TAG, t.toString())
+            }
 
-        castList.forEach {
-            adapter.add(it)
-        }
+            override fun onResponse(call: Call<MovieCredit>, response: Response<MovieCredit>) {
+                val castList = response.body()!!.cast.map {
+                    MovieDetailsCastItem(it)
+                }.toList()
 
-        movie_details_cast_recycler_view.adapter = adapter
+                castList.forEach {
+                    adapter.add(it)
+                }
+
+                movie_details_cast_recycler_view.adapter = adapter
+            }
+        })
 
         movie_details_back_button.setOnClickListener {
             findNavController().popBackStack()
@@ -81,25 +119,9 @@ class MovieDetailsFragment : Fragment() {
     }
 
     companion object {
+        private val TAG = this::class.java.simpleName
 
-        @JvmStatic
-        fun newInstance(
-            title: String,
-            rating: Float,
-            description: String,
-            studio: String,
-            genre: String,
-            year: Int
-        ) =
-            MovieDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_TITLE, title)
-                    putFloat(ARG_RATING, rating)
-                    putString(ARG_DESCRIPTION, description)
-                    putString(ARG_STUDIO, studio)
-                    putString(ARG_GENRE, genre)
-                    putInt(ARG_YEAR, year)
-                }
-            }
+        const val API_KEY = BuildConfig.THE_MOVIE_DATABASE_API
+        private const val ARG_ID = "id"
     }
 }

@@ -1,6 +1,7 @@
 package ru.mikhailskiy.intensiv.ui.tvshows
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +9,14 @@ import androidx.fragment.app.Fragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.tv_shows_fragment.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import ru.mikhailskiy.intensiv.BuildConfig
 import ru.mikhailskiy.intensiv.R
-import ru.mikhailskiy.intensiv.data.MockRepository
 import ru.mikhailskiy.intensiv.data.TvShow
+import ru.mikhailskiy.intensiv.data.TvShowsResponse
+import ru.mikhailskiy.intensiv.network.MovieApiClient
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -46,19 +52,33 @@ class TvShowsFragment : Fragment() {
 
         tv_shows_recycler_view.adapter = adapter.apply { addAll(listOf()) }
 
-        val tvShowsList = MockRepository.getTvShows().map {
-            TvShowsItem(it) { tvShow ->
-                openTvShowDetails(
-                    tvShow
-                )
+        val getPopularTvShows = MovieApiClient.apiClient.getPopularTvShows(API_KEY, "ru")
+
+        getPopularTvShows.enqueue(object : Callback<TvShowsResponse> {
+            override fun onFailure(call: Call<TvShowsResponse>, t: Throwable) {
+                Log.e(TAG, t.toString())
             }
-        }.toList()
 
-        tvShowsList.forEach {
-            adapter.add(it)
-        }
+            override fun onResponse(
+                call: Call<TvShowsResponse>,
+                response: Response<TvShowsResponse>
+            ) {
+                val tvShowsList = response.body()!!.results.map {
+                    TvShowsItem(it) { tvShow ->
+                        openTvShowDetails(
+                            tvShow
+                        )
+                    }
+                }.toList()
 
-        tv_shows_recycler_view.adapter = adapter
+                tvShowsList.forEach {
+                    adapter.add(it)
+                }
+
+                tv_shows_recycler_view.adapter = adapter
+            }
+
+        })
     }
 
     private fun openTvShowDetails(tvShow: TvShow) {
@@ -66,6 +86,9 @@ class TvShowsFragment : Fragment() {
     }
 
     companion object {
+        private val TAG = this::class.java.simpleName
+        const val API_KEY = BuildConfig.THE_MOVIE_DATABASE_API
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             TvShowsFragment().apply {

@@ -1,6 +1,32 @@
 package ru.mikhailskiy.intensiv.data
 
+import com.google.gson.annotations.SerializedName
+
 data class Cast(
-    var firstName: String? = "",
-    var lastName: String? = ""
-)
+    @SerializedName("adult")
+    var adult:Boolean,
+    @SerializedName("gender")
+    var gender:Int?,
+    @SerializedName("id")
+    var id:Int,
+    @SerializedName("known_for_department")
+    var knownForDepartment:String,
+    @SerializedName("name")
+    var name:String,
+    @SerializedName("original_name")
+    var originalName:String,
+    @SerializedName("popularity")
+    var popularity:Double,
+    @SerializedName("cast_id")
+    var castId:Int,
+    @SerializedName("character")
+    var character:String,
+    @SerializedName("credit_id")
+    var creditId:String,
+    @SerializedName("order")
+    var order:Int
+){
+    @SerializedName("profile_path")
+    var profilePath: String? = null
+        get() = "https://image.tmdb.org/t/p/w500$field"
+}

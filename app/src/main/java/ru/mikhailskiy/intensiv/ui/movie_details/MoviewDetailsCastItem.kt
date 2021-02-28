@@ -14,12 +14,11 @@ class MovieDetailsCastItem(
     override fun getLayout() = R.layout.movie_details_item_with_text
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        viewHolder.movie_details_item_first_name.text = content.firstName
-        viewHolder.movie_details_item_last_name.text = content.lastName
+        viewHolder.movie_details_item_name.text = content.name
 
         // TODO Получать из модели
         Picasso.get()
-            .load("https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_.jpg")
+            .load(content.profilePath)
             .into(viewHolder.movie_details_item_image)
     }
 }
