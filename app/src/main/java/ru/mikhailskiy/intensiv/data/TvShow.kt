@@ -1,6 +1,7 @@
 package ru.mikhailskiy.intensiv.data
 
 import com.google.gson.annotations.SerializedName
+import ru.mikhailskiy.intensiv.util.Utils
 
 data class TvShow(
     @SerializedName("popularity")
@@ -29,9 +30,9 @@ data class TvShow(
     var originalName: String?
 ) {
     val rating: Float
-        get() = voteAverage?.div(2)?.toFloat() ?: 0.0f
+        get() = Utils.getRating(voteAverage)
 
     @SerializedName("poster_path")
     var posterPath: String? = null
-        get() = "https://image.tmdb.org/t/p/w500$field"
+        get() =  Utils.getFullImagePath(field)
 }

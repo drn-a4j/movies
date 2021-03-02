@@ -1,6 +1,7 @@
 package ru.mikhailskiy.intensiv.data
 
 import com.google.gson.annotations.SerializedName
+import ru.mikhailskiy.intensiv.util.Utils
 
 data class Cast(
     @SerializedName("adult")
@@ -28,5 +29,5 @@ data class Cast(
 ){
     @SerializedName("profile_path")
     var profilePath: String? = null
-        get() = "https://image.tmdb.org/t/p/w500$field"
+        get() =  Utils.getFullImagePath(field)
 }

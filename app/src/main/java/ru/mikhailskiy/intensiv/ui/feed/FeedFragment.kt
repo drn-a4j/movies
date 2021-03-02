@@ -1,7 +1,6 @@
 package ru.mikhailskiy.intensiv.ui.feed
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -15,7 +14,6 @@ import kotlinx.android.synthetic.main.search_toolbar.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.mikhailskiy.intensiv.BuildConfig
 import ru.mikhailskiy.intensiv.R
 import ru.mikhailskiy.intensiv.data.Movie
 import ru.mikhailskiy.intensiv.data.MoviesResponse
@@ -52,11 +50,11 @@ class FeedFragment : Fragment() {
             }
         }
 
-        val getNowPlayingMovies = MovieApiClient.apiClient.getNowPlayingMovies(API_KEY, "ru")
+        val getNowPlayingMovies = MovieApiClient.apiClient.getNowPlayingMovies()
 
         getNowPlayingMovies.enqueue(object : Callback<MoviesResponse> {
             override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                Log.e(TAG, t.toString())
+                Timber.e(t.toString())
             }
 
             override fun onResponse(
@@ -66,25 +64,26 @@ class FeedFragment : Fragment() {
                 val moviesList = listOf(
                     MainCardContainer(
                         R.string.recommended,
-                        response.body()!!.results.map {
-                            MovieItem(it) { movie ->
-                                openMovieDetails(
-                                    movie
-                                )
-                            }
-                        }.toList()
+                        response.body()?.let {
+                            it.results.map {
+                                MovieItem(it) { movie ->
+                                    openMovieDetails(
+                                        movie
+                                    )
+                                }
+                            }.toList()
+                        } ?: emptyList()
                     )
                 )
                 adapter.apply { addAll(moviesList) }
             }
         })
 
-
-        val getUpcomingMovies = MovieApiClient.apiClient.getUpcomingMovies(API_KEY, "ru")
+        val getUpcomingMovies = MovieApiClient.apiClient.getUpcomingMovies()
 
         getUpcomingMovies.enqueue(object : Callback<MoviesResponse> {
             override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                Log.e(TAG, t.toString())
+                Timber.e(t.toString())
             }
 
             override fun onResponse(
@@ -94,24 +93,26 @@ class FeedFragment : Fragment() {
                 val upcomingMoviesList = listOf(
                     MainCardContainer(
                         R.string.upcoming,
-                        response.body()!!.results.map {
-                            MovieItem(it) { movie ->
-                                openMovieDetails(
-                                    movie
-                                )
-                            }
-                        }.toList()
+                        response.body()?.let {
+                            it.results.map {
+                                MovieItem(it) { movie ->
+                                    openMovieDetails(
+                                        movie
+                                    )
+                                }
+                            }.toList()
+                        } ?: emptyList()
                     )
                 )
                 adapter.apply { addAll(upcomingMoviesList) }
             }
         })
 
-        val getPopularMovies = MovieApiClient.apiClient.getPopularMovies(API_KEY, "ru")
+        val getPopularMovies = MovieApiClient.apiClient.getPopularMovies()
 
         getPopularMovies.enqueue(object : Callback<MoviesResponse> {
             override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                Log.e(TAG, t.toString())
+                Timber.e(t.toString())
             }
 
             override fun onResponse(
@@ -121,19 +122,20 @@ class FeedFragment : Fragment() {
                 val popularMoviesList = listOf(
                     MainCardContainer(
                         R.string.popular,
-                        response.body()!!.results.map {
-                            MovieItem(it) { movie ->
-                                openMovieDetails(
-                                    movie
-                                )
-                            }
-                        }.toList()
+                        response.body()?.let {
+                            it.results.map {
+                                MovieItem(it) { movie ->
+                                    openMovieDetails(
+                                        movie
+                                    )
+                                }
+                            }.toList()
+                        } ?: emptyList()
                     )
                 )
                 adapter.apply { addAll(popularMoviesList) }
             }
         })
-
     }
 
     private fun openMovieDetails(movie: Movie) {
@@ -147,7 +149,7 @@ class FeedFragment : Fragment() {
         }
 
         val bundle = Bundle()
-        bundle.putInt(ARG_ID, movie.id!!)
+        movie.id?.let { bundle.putInt(ARG_ID, it) }
 
         findNavController().navigate(R.id.movie_details_fragment, bundle, options)
     }
@@ -172,15 +174,11 @@ class FeedFragment : Fragment() {
         search_toolbar.clear()
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
     }
 
     companion object {
-        private val TAG = this::class.java.simpleName
-
-        const val API_KEY = BuildConfig.THE_MOVIE_DATABASE_API
         const val ARG_ID = "id"
     }
 }

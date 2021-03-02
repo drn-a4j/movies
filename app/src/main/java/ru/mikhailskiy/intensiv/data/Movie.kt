@@ -1,6 +1,7 @@
 package ru.mikhailskiy.intensiv.data
 
 import com.google.gson.annotations.SerializedName
+import ru.mikhailskiy.intensiv.util.Utils
 
 data class Movie(
     @SerializedName("adult")
@@ -32,8 +33,8 @@ data class Movie(
 ) {
     @SerializedName("poster_path")
     var posterPath: String? = null
-        get() = "https://image.tmdb.org/t/p/w500$field"
+        get() = Utils.getFullImagePath(field)
 
     val rating: Float
-        get() = voteAverage?.div(2)?.toFloat() ?: 0.0f
+        get() = Utils.getRating(voteAverage)
 }

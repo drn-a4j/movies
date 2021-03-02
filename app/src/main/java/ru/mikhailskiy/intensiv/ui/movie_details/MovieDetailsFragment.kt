@@ -1,7 +1,6 @@
 package ru.mikhailskiy.intensiv.ui.movie_details
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +13,13 @@ import kotlinx.android.synthetic.main.movie_details_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.mikhailskiy.intensiv.BuildConfig
 import ru.mikhailskiy.intensiv.R
+import ru.mikhailskiy.intensiv.data.Genre
 import ru.mikhailskiy.intensiv.data.MovieCredit
 import ru.mikhailskiy.intensiv.data.MovieDetails
+import ru.mikhailskiy.intensiv.data.ProductionCompany
 import ru.mikhailskiy.intensiv.network.MovieApiClient
-
+import timber.log.Timber
 
 
 class MovieDetailsFragment : Fragment() {
@@ -48,29 +48,30 @@ class MovieDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val getMovieDetails = MovieApiClient.apiClient.getMovieDetails(id!!, API_KEY, "ru")
-        getMovieDetails.enqueue(object : Callback<MovieDetails> {
+        val getMovieDetails = id?.let { MovieApiClient.apiClient.getMovieDetails(it) }
+        getMovieDetails?.enqueue(object : Callback<MovieDetails> {
             override fun onFailure(call: Call<MovieDetails>, t: Throwable) {
-                Log.d(TAG, t.toString())
+                Timber.d(t.toString())
             }
 
             override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
                 Picasso.get()
-                    .load(response.body()!!.posterPath)
+                    .load(response.body()?.posterPath)
                     .into(movie_details_image)
 
-                movie_details_title.text = response.body()!!.title
-                movie_details_rating.rating = response.body()!!.rating
-                movie_details_description.text = response.body()!!.overview
-                movie_details_year_value.text = response.body()!!.releaseDate.substring(0,4)
+                movie_details_title.text = response.body()?.title
+                movie_details_rating.rating = response.body()?.rating ?: 0.0f
+                movie_details_description.text = response.body()?.overview
+                movie_details_year_value.text = response.body()?.releaseDate
 
                 val genreString = StringBuilder()
-                val genreIterator = response.body()!!.genres.iterator()
+                val genreIterator =
+                    response.body()?.genres?.iterator() ?: emptyList<Genre>().iterator()
 
-                while (genreIterator.hasNext()){
+                while (genreIterator.hasNext()) {
                     genreString.append(genreIterator.next().name.capitalize())
 
-                    if (genreIterator.hasNext()){
+                    if (genreIterator.hasNext()) {
                         genreString.append(", ")
                     }
                 }
@@ -78,12 +79,13 @@ class MovieDetailsFragment : Fragment() {
                 movie_details_genre_value.text = genreString
 
                 val productionString = StringBuilder()
-                val productionIterator = response.body()!!.productionCompany.iterator()
+                val productionIterator = response.body()?.productionCompany?.iterator()
+                    ?: emptyList<ProductionCompany>().iterator()
 
-                while (productionIterator.hasNext()){
+                while (productionIterator.hasNext()) {
                     productionString.append(productionIterator.next().name)
 
-                    if (productionIterator.hasNext()){
+                    if (productionIterator.hasNext()) {
                         productionString.append(", ")
                     }
                 }
@@ -94,18 +96,18 @@ class MovieDetailsFragment : Fragment() {
 
         movie_details_cast_recycler_view.adapter = adapter.apply { addAll(listOf()) }
 
-        val getMovieCredits = MovieApiClient.apiClient.getMovieCredits(id!!, API_KEY, "ru")
-        getMovieCredits.enqueue(object : Callback<MovieCredit> {
+        val getMovieCredits = id?.let { MovieApiClient.apiClient.getMovieCredits(it) }
+        getMovieCredits?.enqueue(object : Callback<MovieCredit> {
             override fun onFailure(call: Call<MovieCredit>, t: Throwable) {
-                Log.d(TAG, t.toString())
+                Timber.d(t.toString())
             }
 
             override fun onResponse(call: Call<MovieCredit>, response: Response<MovieCredit>) {
-                val castList = response.body()!!.cast.map {
+                val castList = response.body()?.cast?.map {
                     MovieDetailsCastItem(it)
-                }.toList()
+                }?.toList()
 
-                castList.forEach {
+                castList?.forEach {
                     adapter.add(it)
                 }
 
@@ -119,9 +121,6 @@ class MovieDetailsFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = this::class.java.simpleName
-
-        const val API_KEY = BuildConfig.THE_MOVIE_DATABASE_API
         private const val ARG_ID = "id"
     }
 }

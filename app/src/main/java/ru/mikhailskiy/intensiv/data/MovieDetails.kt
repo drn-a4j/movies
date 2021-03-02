@@ -1,6 +1,7 @@
 package ru.mikhailskiy.intensiv.data
 
 import com.google.gson.annotations.SerializedName
+import ru.mikhailskiy.intensiv.util.Utils
 
 data class MovieDetails(
     @SerializedName("adult")
@@ -31,8 +32,7 @@ data class MovieDetails(
     var productionCompany: List<ProductionCompany>,
     @SerializedName("production_countries")
     var productionCountry: List<ProductionCountry>,
-    @SerializedName("release_date")
-    var releaseDate: String,
+
     @SerializedName("revenue")
     var revenue: Int,
     @SerializedName("runtime")
@@ -54,10 +54,14 @@ data class MovieDetails(
 ) {
     @SerializedName("poster_path")
     var posterPath: String? = null
-        get() = "https://image.tmdb.org/t/p/w500$field"
+        get() = Utils.getFullImagePath(field)
+
+    @SerializedName("release_date")
+    var releaseDate: String = ""
+        get() = Utils.formatDate(field)
 
     val rating: Float
-        get() = voteAverage.div(2).toFloat() ?: 0.0f
+        get() = Utils.getRating(voteAverage)
 }
 
 data class Genre(
