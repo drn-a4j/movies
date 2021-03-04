@@ -1,10 +1,11 @@
 package ru.mikhailskiy.intensiv.util
 
+import ru.mikhailskiy.intensiv.BuildConfig
+
 object Utils {
-    private const val BASE_IMAGE_PATH = "https://image.tmdb.org/t/p/w500"
 
     fun getFullImagePath(path: String?): String? {
-        return "$BASE_IMAGE_PATH$path"
+        return "${BuildConfig.BASE_IMAGE_PATH}$path"
     }
 
     fun getRating(voteAverage: Double?): Float {

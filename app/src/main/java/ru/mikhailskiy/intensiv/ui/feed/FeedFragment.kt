@@ -161,6 +161,7 @@ class FeedFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         search_toolbar.clear()
+        adapter.clear()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
