@@ -19,6 +19,7 @@ import ru.mikhailskiy.intensiv.data.Movie
 import ru.mikhailskiy.intensiv.data.MoviesResponse
 import ru.mikhailskiy.intensiv.network.MovieApiClient
 import ru.mikhailskiy.intensiv.ui.afterTextChanged
+import ru.mikhailskiy.intensiv.util.Converter
 import timber.log.Timber
 
 class FeedFragment : Fragment() {
@@ -65,13 +66,9 @@ class FeedFragment : Fragment() {
                     MainCardContainer(
                         R.string.recommended,
                         response.body()?.let {
-                            it.results.map {
-                                MovieItem(it) { movie ->
-                                    openMovieDetails(
-                                        movie
-                                    )
-                                }
-                            }.toList()
+                            Converter.convertToMovieItem(it.results) { movie ->
+                                openMovieDetails(movie)
+                            }
                         } ?: emptyList()
                     )
                 )
@@ -94,13 +91,9 @@ class FeedFragment : Fragment() {
                     MainCardContainer(
                         R.string.upcoming,
                         response.body()?.let {
-                            it.results.map {
-                                MovieItem(it) { movie ->
-                                    openMovieDetails(
-                                        movie
-                                    )
-                                }
-                            }.toList()
+                            Converter.convertToMovieItem(it.results) { movie ->
+                                openMovieDetails(movie)
+                            }
                         } ?: emptyList()
                     )
                 )
@@ -123,13 +116,9 @@ class FeedFragment : Fragment() {
                     MainCardContainer(
                         R.string.popular,
                         response.body()?.let {
-                            it.results.map {
-                                MovieItem(it) { movie ->
-                                    openMovieDetails(
-                                        movie
-                                    )
-                                }
-                            }.toList()
+                            Converter.convertToMovieItem(it.results) { movie ->
+                                openMovieDetails(movie)
+                            }
                         } ?: emptyList()
                     )
                 )

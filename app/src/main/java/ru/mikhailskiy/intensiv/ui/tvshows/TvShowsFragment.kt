@@ -15,6 +15,7 @@ import ru.mikhailskiy.intensiv.R
 import ru.mikhailskiy.intensiv.data.TvShow
 import ru.mikhailskiy.intensiv.data.TvShowsResponse
 import ru.mikhailskiy.intensiv.network.MovieApiClient
+import ru.mikhailskiy.intensiv.util.Converter
 import timber.log.Timber
 
 private const val ARG_PARAM1 = "param1"
@@ -63,13 +64,9 @@ class TvShowsFragment : Fragment() {
                 response: Response<TvShowsResponse>
             ) {
                 val tvShowsList = response.body()?.let {
-                    it.results.map {
-                        TvShowsItem(it) { tvShow ->
-                            openTvShowDetails(
-                                tvShow
-                            )
-                        }
-                    }.toList()
+                    Converter.convertToTvShowItem(it.results) { tvShow ->
+                        openTvShowDetails(tvShow)
+                    }
                 }
 
                 tvShowsList?.forEach {

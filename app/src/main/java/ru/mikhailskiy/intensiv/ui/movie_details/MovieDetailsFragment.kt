@@ -59,10 +59,12 @@ class MovieDetailsFragment : Fragment() {
                     .load(response.body()?.posterPath)
                     .into(movie_details_image)
 
-                movie_details_title.text = response.body()?.title
-                movie_details_rating.rating = response.body()?.rating ?: 0.0f
-                movie_details_description.text = response.body()?.overview
-                movie_details_year_value.text = response.body()?.releaseDate
+                response.body()?.let {
+                    movie_details_title.text = it.title
+                    movie_details_rating.rating = it.rating
+                    movie_details_description.text = it.overview
+                    movie_details_year_value.text = it.releaseDate
+                }
 
                 val genreString = StringBuilder()
                 val genreIterator =
