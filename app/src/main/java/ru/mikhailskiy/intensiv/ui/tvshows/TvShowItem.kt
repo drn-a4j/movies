@@ -7,7 +7,7 @@ import kotlinx.android.synthetic.main.tv_shows_item_with_text.*
 import ru.mikhailskiy.intensiv.R
 import ru.mikhailskiy.intensiv.data.TvShow
 
-class TvShowsItem(
+class TvShowItem(
     private val content: TvShow,
     private val onClick: (tvShow: TvShow) -> Unit
 ) : Item() {
@@ -15,15 +15,15 @@ class TvShowsItem(
     override fun getLayout() = R.layout.tv_shows_item_with_text
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        viewHolder.tv_shows_description.text = content.title
-        viewHolder.tv_shows_rating.rating = content.rating
+        viewHolder.tv_show_title.text = content.name?.toUpperCase()
+        viewHolder.tv_show_rating.rating = content.rating
         viewHolder.tv_shows_item_container.setOnClickListener {
             onClick.invoke(content)
         }
 
         // TODO Получать из модели
         Picasso.get()
-            .load("https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_.jpg")
-            .into(viewHolder.tv_shows_image)
+            .load(content.posterPath)
+            .into(viewHolder.tv_show_image)
     }
 }

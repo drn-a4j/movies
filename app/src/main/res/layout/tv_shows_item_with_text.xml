@@ -10,7 +10,7 @@
     android:orientation="vertical">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/tv_shows_image"
+        android:id="@+id/tv_show_image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/tv_shows_image_height"
         android:background="@color/mainFeedBackground"
@@ -24,17 +24,17 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/tv_shows_description"
+            android:id="@+id/tv_show_title"
             style="@style/TvShowsTextView"
-            android:layout_marginTop="@dimen/material_margin_super_small"
-            android:layout_marginBottom="@dimen/material_margin_super_small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_margin_super_small"
+            android:layout_marginBottom="@dimen/material_margin_super_small"
             android:layout_weight="1"
             tools:text="STRANGER THINGS (2016-)" />
 
         <androidx.appcompat.widget.AppCompatRatingBar
-            android:id="@+id/tv_shows_rating"
+            android:id="@+id/tv_show_rating"
             style="@style/Base.Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

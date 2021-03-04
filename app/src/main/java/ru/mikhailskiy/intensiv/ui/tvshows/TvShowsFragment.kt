@@ -8,9 +8,15 @@ import androidx.fragment.app.Fragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.tv_shows_fragment.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import ru.mikhailskiy.intensiv.R
-import ru.mikhailskiy.intensiv.data.MockRepository
 import ru.mikhailskiy.intensiv.data.TvShow
+import ru.mikhailskiy.intensiv.data.TvShowsResponse
+import ru.mikhailskiy.intensiv.network.MovieApiClient
+import ru.mikhailskiy.intensiv.util.Converter
+import timber.log.Timber
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -46,19 +52,30 @@ class TvShowsFragment : Fragment() {
 
         tv_shows_recycler_view.adapter = adapter.apply { addAll(listOf()) }
 
-        val tvShowsList = MockRepository.getTvShows().map {
-            TvShowsItem(it) { tvShow ->
-                openTvShowDetails(
-                    tvShow
-                )
+        val getPopularTvShows = MovieApiClient.apiClient.getPopularTvShows()
+
+        getPopularTvShows.enqueue(object : Callback<TvShowsResponse> {
+            override fun onFailure(call: Call<TvShowsResponse>, t: Throwable) {
+                Timber.e(t.toString())
             }
-        }.toList()
 
-        tvShowsList.forEach {
-            adapter.add(it)
-        }
+            override fun onResponse(
+                call: Call<TvShowsResponse>,
+                response: Response<TvShowsResponse>
+            ) {
+                val tvShowsList = response.body()?.let {
+                    Converter.convertToTvShowItem(it.results) { tvShow ->
+                        openTvShowDetails(tvShow)
+                    }
+                }
 
-        tv_shows_recycler_view.adapter = adapter
+                tvShowsList?.forEach {
+                    adapter.add(it)
+                }
+
+                tv_shows_recycler_view.adapter = adapter
+            }
+        })
     }
 
     private fun openTvShowDetails(tvShow: TvShow) {
