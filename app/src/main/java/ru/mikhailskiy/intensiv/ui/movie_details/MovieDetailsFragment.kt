@@ -1,5 +1,6 @@
 package ru.mikhailskiy.intensiv.ui.movie_details
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,18 +10,11 @@ import androidx.navigation.fragment.findNavController
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.movie_details_fragment.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import ru.mikhailskiy.intensiv.R
-import ru.mikhailskiy.intensiv.data.Genre
-import ru.mikhailskiy.intensiv.data.MovieCredit
-import ru.mikhailskiy.intensiv.data.MovieDetails
-import ru.mikhailskiy.intensiv.data.ProductionCompany
 import ru.mikhailskiy.intensiv.network.MovieApiClient
-import timber.log.Timber
-
 
 class MovieDetailsFragment : Fragment() {
 
@@ -45,21 +39,21 @@ class MovieDetailsFragment : Fragment() {
         return inflater.inflate(R.layout.movie_details_fragment, container, false)
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val getMovieDetails = id?.let { MovieApiClient.apiClient.getMovieDetails(it) }
-        getMovieDetails?.enqueue(object : Callback<MovieDetails> {
-            override fun onFailure(call: Call<MovieDetails>, t: Throwable) {
-                Timber.d(t.toString())
-            }
 
-            override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
+        getMovieDetails
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe {
                 Picasso.get()
-                    .load(response.body()?.posterPath)
+                    .load(it.posterPath)
                     .into(movie_details_image)
 
-                response.body()?.let {
+                it.let {
                     movie_details_title.text = it.title
                     movie_details_rating.rating = it.rating
                     movie_details_description.text = it.overview
@@ -68,7 +62,7 @@ class MovieDetailsFragment : Fragment() {
 
                 val genreString = StringBuilder()
                 val genreIterator =
-                    response.body()?.genres?.iterator() ?: emptyList<Genre>().iterator()
+                    it.genres.iterator()
 
                 while (genreIterator.hasNext()) {
                     genreString.append(genreIterator.next().name.capitalize())
@@ -81,8 +75,7 @@ class MovieDetailsFragment : Fragment() {
                 movie_details_genre_value.text = genreString
 
                 val productionString = StringBuilder()
-                val productionIterator = response.body()?.productionCompany?.iterator()
-                    ?: emptyList<ProductionCompany>().iterator()
+                val productionIterator = it.productionCompany.iterator()
 
                 while (productionIterator.hasNext()) {
                     productionString.append(productionIterator.next().name)
@@ -94,28 +87,25 @@ class MovieDetailsFragment : Fragment() {
 
                 movie_details_studio_value.text = productionString
             }
-        })
 
         movie_details_cast_recycler_view.adapter = adapter.apply { addAll(listOf()) }
 
         val getMovieCredits = id?.let { MovieApiClient.apiClient.getMovieCredits(it) }
-        getMovieCredits?.enqueue(object : Callback<MovieCredit> {
-            override fun onFailure(call: Call<MovieCredit>, t: Throwable) {
-                Timber.d(t.toString())
-            }
 
-            override fun onResponse(call: Call<MovieCredit>, response: Response<MovieCredit>) {
-                val castList = response.body()?.cast?.map {
+        getMovieCredits
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe {
+                val castList = it.cast.map {
                     MovieDetailsCastItem(it)
-                }?.toList()
+                }.toList()
 
-                castList?.forEach {
+                castList.forEach {
                     adapter.add(it)
                 }
 
                 movie_details_cast_recycler_view.adapter = adapter
             }
-        })
 
         movie_details_back_button.setOnClickListener {
             findNavController().popBackStack()

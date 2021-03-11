@@ -4,15 +4,15 @@ import com.squareup.picasso.Picasso
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.tv_shows_item_with_text.*
-import ru.mikhailskiy.intensiv.R
 import ru.mikhailskiy.intensiv.data.TvShow
 
 class TvShowItem(
     private val content: TvShow,
+    private var layout: Int,
     private val onClick: (tvShow: TvShow) -> Unit
 ) : Item() {
 
-    override fun getLayout() = R.layout.tv_shows_item_with_text
+    override fun getLayout() = layout
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.tv_show_title.text = content.name?.toUpperCase()

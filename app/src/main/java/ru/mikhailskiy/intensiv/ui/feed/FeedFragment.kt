@@ -1,5 +1,6 @@
 package ru.mikhailskiy.intensiv.ui.feed
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -8,12 +9,13 @@ import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function3
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.feed_fragment.*
 import kotlinx.android.synthetic.main.feed_header.*
 import kotlinx.android.synthetic.main.search_toolbar.view.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import ru.mikhailskiy.intensiv.R
 import ru.mikhailskiy.intensiv.data.Movie
 import ru.mikhailskiy.intensiv.data.MoviesResponse
@@ -37,6 +39,7 @@ class FeedFragment : Fragment() {
         return inflater.inflate(R.layout.feed_fragment, container, false)
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -51,80 +54,45 @@ class FeedFragment : Fragment() {
             }
         }
 
+        val nowPlayingTitle = R.string.recommended
         val getNowPlayingMovies = MovieApiClient.apiClient.getNowPlayingMovies()
 
-        getNowPlayingMovies.enqueue(object : Callback<MoviesResponse> {
-            override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                Timber.e(t.toString())
-            }
-
-            override fun onResponse(
-                call: Call<MoviesResponse>,
-                response: Response<MoviesResponse>
-            ) {
-                val moviesList = listOf(
-                    MainCardContainer(
-                        R.string.recommended,
-                        response.body()?.let {
-                            Converter.convertToMovieItem(it.results) { movie ->
-                                openMovieDetails(movie)
-                            }
-                        } ?: emptyList()
-                    )
-                )
-                adapter.apply { addAll(moviesList) }
-            }
-        })
-
+        val upcomingTitle = R.string.upcoming
         val getUpcomingMovies = MovieApiClient.apiClient.getUpcomingMovies()
 
-        getUpcomingMovies.enqueue(object : Callback<MoviesResponse> {
-            override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                Timber.e(t.toString())
-            }
-
-            override fun onResponse(
-                call: Call<MoviesResponse>,
-                response: Response<MoviesResponse>
-            ) {
-                val upcomingMoviesList = listOf(
-                    MainCardContainer(
-                        R.string.upcoming,
-                        response.body()?.let {
-                            Converter.convertToMovieItem(it.results) { movie ->
-                                openMovieDetails(movie)
-                            }
-                        } ?: emptyList()
-                    )
-                )
-                adapter.apply { addAll(upcomingMoviesList) }
-            }
-        })
-
+        val popularTitle = R.string.popular
         val getPopularMovies = MovieApiClient.apiClient.getPopularMovies()
 
-        getPopularMovies.enqueue(object : Callback<MoviesResponse> {
-            override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                Timber.e(t.toString())
-            }
-
-            override fun onResponse(
-                call: Call<MoviesResponse>,
-                response: Response<MoviesResponse>
-            ) {
-                val popularMoviesList = listOf(
-                    MainCardContainer(
-                        R.string.popular,
-                        response.body()?.let {
-                            Converter.convertToMovieItem(it.results) { movie ->
+        Observable.zip(
+            getNowPlayingMovies,
+            getUpcomingMovies,
+            getPopularMovies,
+            Function3<MoviesResponse, MoviesResponse, MoviesResponse, List<Pair<Int, MoviesResponse>>> { now, upcoming, popular ->
+                return@Function3 listOf(
+                    Pair(nowPlayingTitle, now),
+                    Pair(upcomingTitle, upcoming),
+                    Pair(popularTitle, popular)
+                )
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { feedProgressBar.visibility = View.VISIBLE }
+            .subscribe({
+                it.forEach {
+                    val moviesList = listOf(
+                        MainCardContainer(
+                            it.first,
+                            Converter.convertToMovieItem(it.second.results) { movie ->
                                 openMovieDetails(movie)
                             }
-                        } ?: emptyList()
+                        )
                     )
-                )
-                adapter.apply { addAll(popularMoviesList) }
-            }
-        })
+                    adapter.apply { addAll(moviesList) }
+                    feedProgressBar.visibility = View.GONE
+                }
+            }, {
+                Timber.e(it.toString())
+            })
     }
 
     private fun openMovieDetails(movie: Movie) {

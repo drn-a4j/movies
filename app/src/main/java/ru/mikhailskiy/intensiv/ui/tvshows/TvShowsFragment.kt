@@ -1,5 +1,6 @@
 package ru.mikhailskiy.intensiv.ui.tvshows
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,16 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.tv_shows_fragment.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import ru.mikhailskiy.intensiv.R
 import ru.mikhailskiy.intensiv.data.TvShow
-import ru.mikhailskiy.intensiv.data.TvShowsResponse
 import ru.mikhailskiy.intensiv.network.MovieApiClient
 import ru.mikhailskiy.intensiv.util.Converter
-import timber.log.Timber
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -47,6 +45,7 @@ class TvShowsFragment : Fragment() {
         return inflater.inflate(R.layout.tv_shows_fragment, container, false)
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -54,28 +53,25 @@ class TvShowsFragment : Fragment() {
 
         val getPopularTvShows = MovieApiClient.apiClient.getPopularTvShows()
 
-        getPopularTvShows.enqueue(object : Callback<TvShowsResponse> {
-            override fun onFailure(call: Call<TvShowsResponse>, t: Throwable) {
-                Timber.e(t.toString())
-            }
-
-            override fun onResponse(
-                call: Call<TvShowsResponse>,
-                response: Response<TvShowsResponse>
-            ) {
-                val tvShowsList = response.body()?.let {
-                    Converter.convertToTvShowItem(it.results) { tvShow ->
+        getPopularTvShows
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { tvShowsProgressBar.visibility = View.VISIBLE }
+            .subscribe {
+                val tvShowsList = it.results.let {
+                    Converter.convertToTvShowItem(it) { tvShow ->
                         openTvShowDetails(tvShow)
                     }
                 }
 
-                tvShowsList?.forEach {
+                tvShowsList.forEach {
                     adapter.add(it)
                 }
 
                 tv_shows_recycler_view.adapter = adapter
+
+                tvShowsProgressBar.visibility = View.GONE
             }
-        })
     }
 
     private fun openTvShowDetails(tvShow: TvShow) {

@@ -1,5 +1,6 @@
 package ru.mikhailskiy.intensiv.util
 
+import ru.mikhailskiy.intensiv.R
 import ru.mikhailskiy.intensiv.data.Movie
 import ru.mikhailskiy.intensiv.data.TvShow
 import ru.mikhailskiy.intensiv.ui.feed.MovieItem
@@ -20,10 +21,11 @@ object Converter {
 
     fun convertToTvShowItem(
         content: List<TvShow>,
+        layout:Int = R.layout.tv_shows_item_with_text,
         openTvShowDetails: (tvShow: TvShow) -> Unit
     ): List<TvShowItem> {
         return content.map {
-            TvShowItem(it) { tvShow ->
+            TvShowItem(content = it, layout = layout) { tvShow ->
                 openTvShowDetails.invoke(tvShow)
             }
         }.toList()

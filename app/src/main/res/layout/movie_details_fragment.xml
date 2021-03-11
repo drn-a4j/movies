@@ -185,12 +185,13 @@
             <TextView
                 android:id="@+id/movie_details_genre_value"
                 style="@style/MovieDetailsTextViewBase"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/material_margin_super_small"
                 android:maxLines="2"
                 app:layout_constraintStart_toStartOf="@+id/movie_details_studio_value"
                 app:layout_constraintTop_toBottomOf="@+id/movie_details_studio_value"
+                app:layout_constraintEnd_toEndOf="parent"
                 tools:text="@string/movie_details_genre_value" />
 
             <TextView
@@ -206,11 +207,12 @@
             <TextView
                 android:id="@+id/movie_details_year_value"
                 style="@style/MovieDetailsTextViewBase"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/material_margin_super_small"
                 app:layout_constraintStart_toStartOf="@+id/movie_details_genre_value"
-                app:layout_constraintTop_toBottomOf="@id/movie_details_genre_label"
+                app:layout_constraintTop_toBottomOf="@id/movie_details_genre_value"
+                app:layout_constraintEnd_toEndOf="parent"
                 tools:text="@string/movie_details_year_value" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
